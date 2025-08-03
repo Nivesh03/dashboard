@@ -5,7 +5,7 @@ import { MetricsGrid } from "./metrics-grid";
 import { MetricsHeader } from "./metrics-header";
 import { ErrorState } from "./skeletons";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 
 interface MetricsContainerProps {
   className?: string;
@@ -14,27 +14,31 @@ interface MetricsContainerProps {
   showHeader?: boolean;
 }
 
-export function MetricsContainer({ 
-  className, 
-  autoRetry = false, 
+export function MetricsContainer({
+  className,
+  autoRetry = false,
   retryDelay = 5000,
-  showHeader = true
+  showHeader = true,
 }: MetricsContainerProps) {
   const { data: metrics, isLoading, error, retry, lastUpdated } = useMetrics();
   const [retryCount, setRetryCount] = useState(0);
   const maxRetries = 3;
 
+  // Use ref to store the latest retry function
+  const retryRef = useRef(retry);
+  retryRef.current = retry;
+
   // Auto-retry logic
   useEffect(() => {
     if (error && autoRetry && retryCount < maxRetries) {
       const timer = setTimeout(() => {
-        retry();
-        setRetryCount(prev => prev + 1);
+        retryRef.current();
+        setRetryCount((prev) => prev + 1);
       }, retryDelay);
 
       return () => clearTimeout(timer);
     }
-  }, [error, autoRetry, retryDelay, retryCount, retry]);
+  }, [error, autoRetry, retryDelay, retryCount]);
 
   // Reset retry count on successful load
   useEffect(() => {
@@ -45,14 +49,15 @@ export function MetricsContainer({
 
   const handleRetry = useCallback(() => {
     setRetryCount(0);
-    retry();
-  }, [retry]);
+    retryRef.current();
+  }, []);
 
   // Show error state
   if (error) {
-    const errorMessage = retryCount >= maxRetries 
-      ? `Failed to load metrics after ${maxRetries} attempts: ${error}`
-      : `Failed to load metrics: ${error}`;
+    const errorMessage =
+      retryCount >= maxRetries
+        ? `Failed to load metrics after ${maxRetries} attempts: ${error}`
+        : `Failed to load metrics: ${error}`;
 
     return (
       <motion.div
@@ -60,7 +65,7 @@ export function MetricsContainer({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <ErrorState 
+        <ErrorState
           message={errorMessage}
           onRetry={retryCount < maxRetries ? handleRetry : undefined}
         />
@@ -71,13 +76,13 @@ export function MetricsContainer({
   return (
     <div>
       {showHeader && (
-        <MetricsHeader 
+        <MetricsHeader
           onRefresh={handleRetry}
           isRefreshing={isLoading}
           lastUpdated={lastUpdated}
         />
       )}
-      
+
       <AnimatePresence mode="wait">
         {isLoading ? (
           <motion.div

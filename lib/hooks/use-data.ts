@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { LoadingState } from "../types";
 import { createDataLoader } from "../data-service";
 import { mockApi } from "../mock-data";
@@ -19,7 +19,12 @@ export function useData<T>(
     isLoading: false,
   });
 
-  const dataLoader = createDataLoader(key, fetchFunction);
+  // Create stable reference for fetchFunction to avoid recreation
+  const fetchFunctionRef = useRef(fetchFunction);
+  fetchFunctionRef.current = fetchFunction;
+
+  // Create dataLoader only once using useMemo to prevent recreation
+  const dataLoader = useMemo(() => createDataLoader(key, () => fetchFunctionRef.current()), [key]);
 
   const load = useCallback(async () => {
     const result = await dataLoader.load();
@@ -37,6 +42,10 @@ export function useData<T>(
     return result;
   }, [dataLoader]);
 
+  // Use ref to store the latest load function to avoid dependency issues
+  const loadRef = useRef(load);
+  loadRef.current = load;
+
   // Subscribe to loading state changes
   useEffect(() => {
     const unsubscribe = dataLoader.subscribe((state) => {
@@ -49,22 +58,22 @@ export function useData<T>(
   // Auto-load data on mount
   useEffect(() => {
     if (autoLoad) {
-      load();
+      loadRef.current();
     }
-  }, [autoLoad, load]);
+  }, [autoLoad]);
 
   // Set up refresh interval
   useEffect(() => {
     if (refreshInterval && refreshInterval > 0) {
       const interval = setInterval(() => {
         if (!loadingState.isLoading) {
-          load();
+          loadRef.current();
         }
       }, refreshInterval);
 
       return () => clearInterval(interval);
     }
-  }, [refreshInterval, loadingState.isLoading, load]);
+  }, [refreshInterval, loadingState.isLoading]);
 
   return {
     data,
