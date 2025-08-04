@@ -29,18 +29,27 @@ export function ThemeProvider({
   storageKey = "dashboard-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(defaultTheme);
+  const [theme, setTheme] = useState<Theme>(() => {
+    // Initialize with stored theme if available during SSR
+    if (typeof window !== "undefined") {
+      const storedTheme = localStorage?.getItem(storageKey) as Theme;
+      return storedTheme || defaultTheme;
+    }
+    return defaultTheme;
+  });
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     const storedTheme = localStorage?.getItem(storageKey) as Theme;
-    if (storedTheme) {
+    if (storedTheme && storedTheme !== theme) {
       setTheme(storedTheme);
     }
-  }, [storageKey]);
+  }, [storageKey, theme]);
 
   useEffect(() => {
+    if (!mounted) return;
+
     const root = window.document.documentElement;
 
     // Add transition class for smooth theme switching
@@ -55,14 +64,14 @@ export function ThemeProvider({
         : "light";
 
       root.classList.add(systemTheme);
-      
+
       // Listen for system theme changes
       const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       const handleChange = (e: MediaQueryListEvent) => {
         root.classList.remove("light", "dark");
         root.classList.add(e.matches ? "dark" : "light");
       };
-      
+
       mediaQuery.addEventListener("change", handleChange);
       return () => mediaQuery.removeEventListener("change", handleChange);
     }
@@ -75,7 +84,7 @@ export function ThemeProvider({
     }, 300);
 
     return () => clearTimeout(timeout);
-  }, [theme]);
+  }, [theme, mounted]);
 
   const value = {
     theme,
