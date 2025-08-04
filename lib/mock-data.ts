@@ -183,6 +183,90 @@ export const mockCampaignData: TableRow[] = [
     roas: 2.63,
     date: '2024-01-11',
     status: 'completed'
+  },
+  {
+    id: 'camp_006',
+    campaign: 'Summer Fashion Week',
+    impressions: 210000,
+    clicks: 4200,
+    conversions: 245,
+    cost: 3800,
+    revenue: 12500,
+    roas: 3.29,
+    date: '2024-01-10',
+    status: 'active'
+  },
+  {
+    id: 'camp_007',
+    campaign: 'Back to School Promo',
+    impressions: 89000,
+    clicks: 1780,
+    conversions: 92,
+    cost: 1450,
+    revenue: 3200,
+    roas: 2.21,
+    date: '2024-01-09',
+    status: 'paused'
+  },
+  {
+    id: 'camp_008',
+    campaign: 'Black Friday Preview',
+    impressions: 340000,
+    clicks: 8500,
+    conversions: 420,
+    cost: 5200,
+    revenue: 18900,
+    roas: 3.63,
+    date: '2024-01-08',
+    status: 'completed'
+  },
+  {
+    id: 'camp_009',
+    campaign: 'Influencer Collaboration',
+    impressions: 67000,
+    clicks: 2340,
+    conversions: 167,
+    cost: 2100,
+    revenue: 8900,
+    roas: 4.24,
+    date: '2024-01-07',
+    status: 'active'
+  },
+  {
+    id: 'camp_010',
+    campaign: 'Product Launch Beta',
+    impressions: 45000,
+    clicks: 890,
+    conversions: 34,
+    cost: 1200,
+    revenue: 1800,
+    roas: 1.50,
+    date: '2024-01-06',
+    status: 'paused'
+  },
+  {
+    id: 'camp_011',
+    campaign: 'Customer Retention Drive',
+    impressions: 156000,
+    clicks: 3100,
+    conversions: 289,
+    cost: 2800,
+    revenue: 14500,
+    roas: 5.18,
+    date: '2024-01-05',
+    status: 'active'
+  },
+  {
+    id: 'camp_012',
+    campaign: 'New Year Special Offer',
+    impressions: 278000,
+    clicks: 5600,
+    conversions: 312,
+    cost: 4200,
+    revenue: 16800,
+    roas: 4.00,
+    date: '2024-01-04',
+    status: 'completed'
   }
 ];
 
