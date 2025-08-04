@@ -6,9 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ErrorBoundary } from "@/components/dashboard/error-boundary"
 import { ChartsShowcase } from "@/components/dashboard/charts/charts-showcase"
-import { LineChart } from "@/components/dashboard/charts/line-chart"
-import { BarChart } from "@/components/dashboard/charts/bar-chart"
-import { PieChart } from "@/components/dashboard/charts/pie-chart"
+import { LazyLineChart, LazyBarChart, LazyPieChart } from "@/components/dashboard/charts/lazy-charts"
 import { ChartContainer } from "@/components/dashboard/charts/chart-container"
 import { ChartSkeleton } from "@/components/dashboard/skeletons"
 import { ArrowLeft, Download, RefreshCw } from "lucide-react"
@@ -37,7 +35,7 @@ function RevenueAnalytics() {
               expandable
               onRefresh={() => window.location.reload()}
             >
-              <LineChart
+              <LazyLineChart
                 data={[]}
                 title=""
                 dataKey="value"
@@ -72,7 +70,7 @@ function ChannelAnalytics() {
                 expandable
                 onRefresh={() => window.location.reload()}
               >
-                <BarChart
+                <LazyBarChart
                   data={[]}
                   title=""
                   dataKey="value"
@@ -101,7 +99,7 @@ function ChannelAnalytics() {
                 expandable
                 onRefresh={() => window.location.reload()}
               >
-                <PieChart
+                <LazyPieChart
                   data={[]}
                   title=""
                   dataKey="value"
@@ -138,7 +136,7 @@ function ConversionAnalytics() {
               expandable
               onRefresh={() => window.location.reload()}
             >
-              <PieChart
+              <LazyPieChart
                 data={[]}
                 title=""
                 dataKey="value"

@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useTheme } from '@/components/providers/theme-provider';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, memo, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -28,7 +28,7 @@ interface ResponsiveChartWrapperProps {
   aspectRatio?: number;
 }
 
-const ChartSkeleton = ({ height = 300 }: { height?: number }) => (
+const ChartSkeleton = memo(({ height = 300 }: { height?: number }) => (
   <div className="space-y-4">
     <div className="flex items-center justify-between">
       <Skeleton className="h-6 w-32" />
@@ -44,9 +44,11 @@ const ChartSkeleton = ({ height = 300 }: { height?: number }) => (
       <Skeleton className="h-6 w-16" />
     </div>
   </div>
-);
+));
 
-const ErrorState = ({ 
+ChartSkeleton.displayName = 'ChartSkeleton';
+
+const ErrorState = memo(({ 
   error, 
   onRetry, 
   onRefresh 
@@ -85,9 +87,11 @@ const ErrorState = ({
       )}
     </div>
   </div>
-);
+));
 
-export function ResponsiveChartWrapper({
+ErrorState.displayName = 'ErrorState';
+
+export const ResponsiveChartWrapper = memo(function ResponsiveChartWrapper({
   children,
   minHeight = 200,
   maxHeight = 500,
@@ -95,26 +99,37 @@ export function ResponsiveChartWrapper({
 }: ResponsiveChartWrapperProps) {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-  useEffect(() => {
-    const updateDimensions = () => {
-      const width = window.innerWidth;
-      let chartHeight = width / aspectRatio;
-      
-      // Apply min/max constraints
-      chartHeight = Math.max(minHeight, Math.min(maxHeight, chartHeight));
-      
-      // Use responsive dimensions from theme
-      const responsiveDimensions = getResponsiveDimensions(width);
-      chartHeight = Math.min(chartHeight, responsiveDimensions.height);
-      
-      setDimensions({ width, height: chartHeight });
-    };
-
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
+  const updateDimensions = useCallback(() => {
+    const width = window.innerWidth;
+    let chartHeight = width / aspectRatio;
     
-    return () => window.removeEventListener('resize', updateDimensions);
+    // Apply min/max constraints
+    chartHeight = Math.max(minHeight, Math.min(maxHeight, chartHeight));
+    
+    // Use responsive dimensions from theme
+    const responsiveDimensions = getResponsiveDimensions(width);
+    chartHeight = Math.min(chartHeight, responsiveDimensions.height);
+    
+    setDimensions({ width, height: chartHeight });
   }, [aspectRatio, minHeight, maxHeight]);
+
+  useEffect(() => {
+    updateDimensions();
+    
+    // Throttle resize events for better performance
+    let timeoutId: NodeJS.Timeout;
+    const throttledResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(updateDimensions, 100);
+    };
+    
+    window.addEventListener('resize', throttledResize);
+    
+    return () => {
+      window.removeEventListener('resize', throttledResize);
+      clearTimeout(timeoutId);
+    };
+  }, [updateDimensions]);
 
   return (
     <motion.div
@@ -127,9 +142,9 @@ export function ResponsiveChartWrapper({
       {children}
     </motion.div>
   );
-}
+});
 
-export function ChartContainer({
+export const ChartContainer = memo(function ChartContainer({
   title,
   children,
   isLoading = false,
@@ -149,6 +164,29 @@ export function ChartContainer({
     setMounted(true);
   }, []);
 
+  // Memoize theme calculation
+  const currentTheme = useMemo(() => {
+    if (!mounted) return 'light';
+    if (theme === 'system') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return theme;
+  }, [theme, mounted]);
+
+  const isDark = currentTheme === 'dark';
+
+  // Memoize chart theme variables
+  const chartThemeVars = useMemo(() => getChartCSSVariables(isDark), [isDark]);
+
+  // Memoize callbacks
+  const handleExpand = useCallback(() => {
+    setIsExpanded(prev => !prev);
+  }, []);
+
+  const handleBackdropClick = useCallback(() => {
+    setIsExpanded(false);
+  }, []);
+
   if (!mounted) {
     return (
       <Card className={className}>
@@ -159,20 +197,6 @@ export function ChartContainer({
     );
   }
 
-  // Determine current theme
-  const getCurrentTheme = () => {
-    if (theme === 'system') {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    return theme;
-  };
-
-  const currentTheme = getCurrentTheme();
-  const isDark = currentTheme === 'dark';
-
-  // Apply theme-aware CSS variables for charts
-  const chartThemeVars = getChartCSSVariables(isDark);
-
   return (
     <motion.div
       className={`${className} ${isExpanded ? 'fixed inset-4 z-50' : ''}`}
@@ -181,7 +205,7 @@ export function ChartContainer({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className={`h-full ${isExpanded ? 'shadow-2xl' : ''}`}>
+      <Card className={`h-full ${isExpanded ? 'shadow-2xl' : ''}`} data-testid="chart-container">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <CardTitle className="text-lg font-semibold">{title}</CardTitle>
           <div className="flex items-center gap-2">
@@ -201,8 +225,9 @@ export function ChartContainer({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setIsExpanded(!isExpanded)}
+                onClick={handleExpand}
                 className="h-8 w-8 p-0"
+                aria-label={isExpanded ? 'Exit fullscreen' : 'Enter fullscreen'}
               >
                 {isExpanded ? (
                   <Minimize2 className="w-4 h-4" />
@@ -243,9 +268,9 @@ export function ChartContainer({
           className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          onClick={() => setIsExpanded(false)}
+          onClick={handleBackdropClick}
         />
       )}
     </motion.div>
   );
-}
+});

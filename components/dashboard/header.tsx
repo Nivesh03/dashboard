@@ -21,7 +21,7 @@ interface HeaderProps {
 
 export function Header({ title = "Dashboard", description }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" data-testid="header">
       <div className="flex h-16 items-center justify-between px-4 sm:px-6">
         {/* Left side - Title and search */}
         <div className="flex items-center space-x-2 sm:space-x-4 min-w-0 flex-1">

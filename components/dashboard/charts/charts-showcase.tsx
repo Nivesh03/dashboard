@@ -1,9 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { LineChart } from './line-chart';
-import { BarChart } from './bar-chart';
-import { PieChart } from './pie-chart';
+import { LazyLineChart, LazyBarChart, LazyPieChart } from './lazy-charts';
 import { ChartContainer } from './chart-container';
 import { mockApi } from '@/lib/mock-data';
 import { TimeSeriesData, CategoryData } from '@/lib/types';
@@ -65,7 +63,7 @@ export function ChartsShowcase() {
         expandable
         className="lg:col-span-2"
       >
-        <LineChart
+        <LazyLineChart
           data={revenueData}
           title=""
           dataKey="value"
@@ -85,7 +83,7 @@ export function ChartsShowcase() {
         onRefresh={loadData}
         expandable
       >
-        <BarChart
+        <LazyBarChart
           data={channelData}
           title=""
           dataKey="value"
@@ -106,7 +104,7 @@ export function ChartsShowcase() {
         onRefresh={loadData}
         expandable
       >
-        <PieChart
+        <LazyPieChart
           data={channelData}
           title=""
           dataKey="value"
@@ -129,7 +127,7 @@ export function ChartsShowcase() {
         expandable
         className="lg:col-span-2"
       >
-        <PieChart
+        <LazyPieChart
           data={channelData}
           title=""
           dataKey="value"

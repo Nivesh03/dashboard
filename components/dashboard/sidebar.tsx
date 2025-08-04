@@ -37,6 +37,11 @@ const navigation = [
     href: "/dashboard/reports",
     icon: PieChart,
   },
+  {
+    name: "Integration Test",
+    href: "/dashboard/integration",
+    icon: TrendingUp,
+  },
 ]
 
 interface SidebarProps {
@@ -83,6 +88,7 @@ export function Sidebar({ className }: SidebarProps) {
           mobileOpen ? "translate-x-0" : "-translate-x-full",
           className
         )}
+        data-testid="sidebar"
       >
         {/* Header */}
         <div className="flex h-16 items-center justify-between px-4">

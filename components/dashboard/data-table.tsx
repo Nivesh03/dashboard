@@ -184,7 +184,7 @@ export function DataTable({
       )}
       {/* Swipe-enabled horizontal scroll container */}
       <SwipeTable>
-        <Table className="min-w-[800px]">
+        <Table className="min-w-[800px]" data-testid="data-table">
         <TableHeader>
           <TableRow>
             <SortableHeader 

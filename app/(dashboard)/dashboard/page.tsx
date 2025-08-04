@@ -12,6 +12,8 @@ import { EnhancedLoading } from "@/components/dashboard/enhanced-loading"
 import { ChartSkeleton, TableSkeleton } from "@/components/dashboard/skeletons"
 import { ArrowRight, TrendingUp, Users, DollarSign, Target } from "lucide-react"
 import Link from "next/link"
+import { initializePerformanceMonitoring } from "@/lib/performance-utils"
+import { useEffect } from "react"
 
 // Loading component for charts section
 function ChartsLoading() {
@@ -188,6 +190,12 @@ function QuickActions() {
 }
 
 export default function DashboardPage() {
+  // Initialize performance monitoring
+  useEffect(() => {
+    const monitor = initializePerformanceMonitoring();
+    return () => monitor?.disconnect();
+  }, []);
+
   return (
     <div className="space-y-6">
       {/* Page Header */}

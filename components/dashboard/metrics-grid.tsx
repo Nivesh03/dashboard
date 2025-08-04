@@ -40,6 +40,7 @@ export function MetricsGrid({ metrics, isLoading, className }: MetricsGridProps)
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
+      data-testid="metrics-grid"
     >
       {metrics.map((metric, index) => (
         <motion.div

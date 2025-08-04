@@ -63,7 +63,7 @@ export function MetricCard({ metric, className }: MetricCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className={cn("transition-all duration-200 hover:shadow-md touch-target", className)}>
+      <Card className={cn("transition-all duration-200 hover:shadow-md touch-target", className)} data-testid="metric-card">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-4 sm:px-6 pt-4 sm:pt-6">
           <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground truncate pr-2">
             {title}

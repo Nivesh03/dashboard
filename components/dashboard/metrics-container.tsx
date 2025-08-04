@@ -5,7 +5,8 @@ import { MetricsGrid } from "./metrics-grid";
 import { MetricsHeader } from "./metrics-header";
 import { ErrorState } from "./skeletons";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef, memo } from "react";
+import { fadeInVariants, slideUpVariants, shouldReduceMotion } from "@/lib/animation-utils";
 
 interface MetricsContainerProps {
   className?: string;
@@ -14,7 +15,7 @@ interface MetricsContainerProps {
   showHeader?: boolean;
 }
 
-export function MetricsContainer({
+export const MetricsContainer = memo(function MetricsContainer({
   className,
   autoRetry = false,
   retryDelay = 5000,
@@ -59,11 +60,13 @@ export function MetricsContainer({
         ? `Failed to load metrics after ${maxRetries} attempts: ${error}`
         : `Failed to load metrics: ${error}`;
 
+    const motionVariants = shouldReduceMotion() ? fadeInVariants : slideUpVariants;
+    
     return (
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+        variants={motionVariants}
+        initial="hidden"
+        animate="visible"
       >
         <ErrorState
           message={errorMessage}
@@ -87,20 +90,21 @@ export function MetricsContainer({
         {isLoading ? (
           <motion.div
             key="loading"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            variants={fadeInVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
           >
             <MetricsGrid isLoading={true} className={className} />
           </motion.div>
         ) : (
           <motion.div
             key="loaded"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
+            variants={shouldReduceMotion() ? fadeInVariants : slideUpVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            transition={{ delay: 0.1 }}
           >
             <MetricsGrid metrics={metrics || undefined} className={className} />
           </motion.div>
@@ -108,4 +112,4 @@ export function MetricsContainer({
       </AnimatePresence>
     </div>
   );
-}
+});

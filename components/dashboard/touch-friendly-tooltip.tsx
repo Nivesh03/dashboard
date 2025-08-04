@@ -1,7 +1,9 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { memo, useMemo } from "react"
 import { cn } from "@/lib/utils"
+import { tooltipVariants, shouldReduceMotion } from "@/lib/animation-utils"
 
 interface TouchFriendlyTooltipProps {
   active?: boolean
@@ -15,13 +17,27 @@ interface TouchFriendlyTooltipProps {
   className?: string
 }
 
-export function TouchFriendlyTooltip({ 
+export const TouchFriendlyTooltip = memo(function TouchFriendlyTooltip({ 
   active, 
   payload, 
   label, 
   formatValue,
   className 
 }: TouchFriendlyTooltipProps) {
+  // Memoize formatted label to avoid recalculation
+  const formattedLabel = useMemo(() => {
+    if (!label) return null;
+    
+    if (typeof label === 'string' && label.includes('-')) {
+      return new Date(label).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    }
+    return label;
+  }, [label]);
+
   if (!active || !payload || !payload.length || !label) {
     return null
   }
@@ -30,11 +46,20 @@ export function TouchFriendlyTooltip({
   const value = data.value as number
   const formattedValue = formatValue ? formatValue(value) : value.toLocaleString()
   
+  // Use optimized animation variants
+  const motionVariants = shouldReduceMotion() ? 
+    { hidden: { opacity: 0 }, visible: { opacity: 1 } } : 
+    {
+      hidden: { opacity: 0, scale: 0.9, y: 10 },
+      visible: { opacity: 1, scale: 1, y: 0 }
+    };
+  
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9, y: 10 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.9, y: 10 }}
+      variants={motionVariants}
+      initial="hidden"
+      animate="visible"
+      exit="hidden"
       transition={{ duration: 0.15, ease: "easeOut" }}
       className={cn(
         "bg-background/95 backdrop-blur-sm border rounded-lg shadow-lg",
@@ -45,14 +70,7 @@ export function TouchFriendlyTooltip({
     >
       {/* Date/Label */}
       <p className="text-sm font-medium text-foreground mb-2">
-        {typeof label === 'string' && label.includes('-') 
-          ? new Date(label).toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric',
-              year: 'numeric'
-            })
-          : label
-        }
+        {formattedLabel}
       </p>
       
       {/* Value with color indicator */}
@@ -72,4 +90,4 @@ export function TouchFriendlyTooltip({
       </div>
     </motion.div>
   )
-}
+});
