@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TableRow as TableRowType, SortConfig } from "@/lib/types"
+import { SwipeTable } from "./swipe-table"
 
 interface DataTableProps {
   data: TableRowType[]
@@ -54,20 +55,20 @@ function SortableHeader({
       <Button
         variant="ghost"
         size="sm"
-        className="h-auto p-0 font-medium hover:bg-transparent"
+        className="h-auto min-h-[44px] p-2 font-medium hover:bg-transparent touch-target"
         onClick={handleSort}
       >
         <span className="flex items-center gap-2">
-          {children}
-          <span className="flex flex-col">
+          <span className="text-xs sm:text-sm">{children}</span>
+          <span className="flex flex-col flex-shrink-0">
             {!isSorted && (
-              <ChevronsUpDown className="h-3 w-3 text-muted-foreground" />
+              <ChevronsUpDown className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
             )}
             {isSorted && direction === 'asc' && (
-              <ChevronUp className="h-3 w-3 text-foreground" />
+              <ChevronUp className="h-3 w-3 sm:h-4 sm:w-4 text-foreground" />
             )}
             {isSorted && direction === 'desc' && (
-              <ChevronDown className="h-3 w-3 text-foreground" />
+              <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 text-foreground" />
             )}
           </span>
         </span>
@@ -154,6 +155,7 @@ function StatusBadge({ status }: { status: string }) {
   return (
     <span className={cn(
       "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium",
+      "min-h-[24px] touch-target", // Ensure minimum touch target
       statusStyles[status as keyof typeof statusStyles] || statusStyles.active
     )}>
       {status}
@@ -180,7 +182,9 @@ export function DataTable({
           </div>
         </div>
       )}
-      <Table>
+      {/* Swipe-enabled horizontal scroll container */}
+      <SwipeTable>
+        <Table className="min-w-[800px]">
         <TableHeader>
           <TableRow>
             <SortableHeader 
@@ -247,24 +251,41 @@ export function DataTable({
           {error && <ErrorRow error={error} />}
           {!isLoading && !error && data.length === 0 && <EmptyRow />}
           {!isLoading && !error && data.length > 0 && data.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell className="font-medium">{row.campaign}</TableCell>
-              <TableCell>{formatNumber(row.impressions)}</TableCell>
-              <TableCell>{formatNumber(row.clicks)}</TableCell>
-              <TableCell>{formatNumber(row.conversions)}</TableCell>
-              <TableCell>{formatCurrency(row.cost)}</TableCell>
-              <TableCell>{formatCurrency(row.revenue)}</TableCell>
-              <TableCell className="font-mono">
+            <TableRow key={row.id} className="touch-target">
+              <TableCell className="font-medium text-xs sm:text-sm px-2 sm:px-4 py-3 sm:py-4">
+                <div className="max-w-[150px] truncate" title={row.campaign}>
+                  {row.campaign}
+                </div>
+              </TableCell>
+              <TableCell className="text-xs sm:text-sm px-2 sm:px-4 py-3 sm:py-4">
+                {formatNumber(row.impressions)}
+              </TableCell>
+              <TableCell className="text-xs sm:text-sm px-2 sm:px-4 py-3 sm:py-4">
+                {formatNumber(row.clicks)}
+              </TableCell>
+              <TableCell className="text-xs sm:text-sm px-2 sm:px-4 py-3 sm:py-4">
+                {formatNumber(row.conversions)}
+              </TableCell>
+              <TableCell className="text-xs sm:text-sm px-2 sm:px-4 py-3 sm:py-4">
+                {formatCurrency(row.cost)}
+              </TableCell>
+              <TableCell className="text-xs sm:text-sm px-2 sm:px-4 py-3 sm:py-4">
+                {formatCurrency(row.revenue)}
+              </TableCell>
+              <TableCell className="font-mono text-xs sm:text-sm px-2 sm:px-4 py-3 sm:py-4">
                 {row.roas.toFixed(2)}x
               </TableCell>
-              <TableCell>{formatDate(row.date)}</TableCell>
-              <TableCell>
+              <TableCell className="text-xs sm:text-sm px-2 sm:px-4 py-3 sm:py-4">
+                {formatDate(row.date)}
+              </TableCell>
+              <TableCell className="px-2 sm:px-4 py-3 sm:py-4">
                 <StatusBadge status={row.status || 'active'} />
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+        </Table>
+      </SwipeTable>
     </div>
   )
 }

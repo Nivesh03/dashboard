@@ -22,11 +22,14 @@ export function DashboardLayout({
     <div className="min-h-screen bg-background">
       <Sidebar />
       
-      {/* Main content */}
+      {/* Main content with responsive padding */}
       <div className="lg:pl-64">
         <Header title={title} description={description} />
         
-        <main className={cn("flex-1 p-6", className)}>
+        <main className={cn(
+          "flex-1 p-4 sm:p-6", // Reduced padding on mobile
+          className
+        )}>
           {children}
         </main>
       </div>

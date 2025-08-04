@@ -5,10 +5,10 @@ import { ErrorBoundary } from "@/components/dashboard/error-boundary"
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Overview</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Welcome to your analytics dashboard. Here&apos;s what&apos;s happening with your campaigns.
         </p>
       </div>
@@ -18,7 +18,7 @@ export default function DashboardPage() {
         <MetricsContainer autoRetry={true} retryDelay={3000} />
       </ErrorBoundary>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <Card>
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>

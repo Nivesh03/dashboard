@@ -63,9 +63,9 @@ export function MetricCard({ metric, className }: MetricCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className={cn("transition-all duration-200 hover:shadow-md", className)}>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
+      <Card className={cn("transition-all duration-200 hover:shadow-md touch-target", className)}>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-4 sm:px-6 pt-4 sm:pt-6">
+          <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground truncate pr-2">
             {title}
           </CardTitle>
           <motion.div
@@ -74,15 +74,16 @@ export function MetricCard({ metric, className }: MetricCardProps) {
               rotate: isAnimating ? 5 : 0 
             }}
             transition={{ duration: 0.2 }}
+            className="flex-shrink-0"
           >
-            <Icon className="h-4 w-4 text-muted-foreground" />
+            <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
           </motion.div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
           <div className="flex items-end justify-between">
-            <div className="space-y-1">
+            <div className="space-y-1 min-w-0 flex-1">
               <motion.div 
-                className="text-2xl font-bold tracking-tight"
+                className="text-xl sm:text-2xl font-bold tracking-tight truncate"
                 animate={{ 
                   scale: isAnimating ? 1.05 : 1,
                   color: isAnimating ? "hsl(var(--primary))" : "hsl(var(--foreground))"

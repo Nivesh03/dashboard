@@ -1,18 +1,19 @@
-'use client';
+"use client";
 
-import { 
-  LineChart as RechartsLineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer
-} from 'recharts';
-import { motion } from 'framer-motion';
-import { TimeSeriesData } from '@/lib/types';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import {
+  LineChart as RechartsLineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { motion } from "framer-motion";
+import { TimeSeriesData } from "@/lib/types";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TouchFriendlyTooltip } from "../touch-friendly-tooltip";
 
 interface LineChartProps {
   data: TimeSeriesData[];
@@ -38,12 +39,19 @@ interface CustomTooltipProps {
   formatValue?: (value: number) => string;
 }
 
-const CustomTooltip = ({ active, payload, label, formatValue }: CustomTooltipProps) => {
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+  formatValue,
+}: CustomTooltipProps) => {
   if (active && payload && payload.length && label) {
     const data = payload[0];
     const value = data.value as number;
-    const formattedValue = formatValue ? formatValue(value) : value.toLocaleString();
-    
+    const formattedValue = formatValue
+      ? formatValue(value)
+      : value.toLocaleString();
+
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -51,18 +59,21 @@ const CustomTooltip = ({ active, payload, label, formatValue }: CustomTooltipPro
         className="bg-background/95 backdrop-blur-sm border rounded-lg shadow-lg p-3"
       >
         <p className="text-sm font-medium text-foreground">
-          {new Date(label).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
+          {new Date(label).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
           })}
         </p>
         <p className="text-sm text-muted-foreground">
-          <span 
-            className="inline-block w-3 h-3 rounded-full mr-2" 
+          <span
+            className="inline-block w-3 h-3 rounded-full mr-2"
             style={{ backgroundColor: data.color }}
           />
-          {data.name}: <span className="font-semibold text-foreground">{formattedValue}</span>
+          {data.name}:{" "}
+          <span className="font-semibold text-foreground">
+            {formattedValue}
+          </span>
         </p>
       </motion.div>
     );
@@ -86,11 +97,19 @@ const LineChartSkeleton = ({ height = 300 }: { height?: number }) => (
   </Card>
 );
 
-const ErrorState = ({ error, onRetry }: { error: string; onRetry?: () => void }) => (
+const ErrorState = ({
+  error,
+  onRetry,
+}: {
+  error: string;
+  onRetry?: () => void;
+}) => (
   <Card>
     <CardContent className="flex flex-col items-center justify-center py-8">
       <div className="text-center space-y-2">
-        <p className="text-sm text-muted-foreground">Failed to load chart data</p>
+        <p className="text-sm text-muted-foreground">
+          Failed to load chart data
+        </p>
         <p className="text-xs text-red-500">{error}</p>
         {onRetry && (
           <button
@@ -108,13 +127,13 @@ const ErrorState = ({ error, onRetry }: { error: string; onRetry?: () => void })
 export function LineChart({
   data,
   dataKey,
-  color = 'hsl(var(--chart-1))',
+  color = "hsl(var(--chart-1))",
   isLoading = false,
   error,
   height = 300,
   showGrid = true,
   showTooltip = true,
-  formatValue
+  formatValue,
 }: LineChartProps) {
   if (isLoading) {
     return <LineChartSkeleton height={height} />;
@@ -138,14 +157,14 @@ export function LineChart({
         data={data}
         margin={{
           top: 5,
-          right: 30,
-          left: 20,
+          right: 15,
+          left: 10,
           bottom: 5,
         }}
       >
         {showGrid && (
-          <CartesianGrid 
-            strokeDasharray="3 3" 
+          <CartesianGrid
+            strokeDasharray="3 3"
             stroke="hsl(var(--border))"
             opacity={0.3}
           />
@@ -154,25 +173,32 @@ export function LineChart({
           dataKey="date"
           tickFormatter={(value) => {
             const date = new Date(value);
-            return date.toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric'
+            return date.toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
             });
           }}
-          tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+          tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
           axisLine={false}
           tickLine={false}
+          interval="preserveStartEnd"
+          minTickGap={30}
         />
         <YAxis
-          tickFormatter={(value) => formatValue ? formatValue(value) : value.toLocaleString()}
-          tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+          tickFormatter={(value) =>
+            formatValue ? formatValue(value) : value.toLocaleString()
+          }
+          tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
           axisLine={false}
           tickLine={false}
+          width={60}
         />
         {showTooltip && (
           <Tooltip
-            content={<CustomTooltip formatValue={formatValue} />}
-            cursor={{ stroke: color, strokeWidth: 1, strokeDasharray: '5 5' }}
+            content={<TouchFriendlyTooltip formatValue={formatValue} />}
+            cursor={{ stroke: color, strokeWidth: 1, strokeDasharray: "5 5" }}
+            allowEscapeViewBox={{ x: false, y: true }}
+            position={{ x: undefined, y: undefined }}
           />
         )}
         <Line
@@ -180,12 +206,12 @@ export function LineChart({
           dataKey={dataKey}
           stroke={color}
           strokeWidth={2}
-          dot={{ fill: color, strokeWidth: 2, r: 4 }}
-          activeDot={{ 
-            r: 6, 
+          dot={{ fill: color, strokeWidth: 2, r: 3 }}
+          activeDot={{
+            r: 8, // Larger for touch devices
             fill: color,
-            stroke: 'hsl(var(--background))',
-            strokeWidth: 2
+            stroke: "hsl(var(--background))",
+            strokeWidth: 2,
           }}
           animationDuration={1000}
           animationEasing="ease-in-out"

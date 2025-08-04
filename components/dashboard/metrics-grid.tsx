@@ -18,7 +18,7 @@ export function MetricsGrid({ metrics, isLoading, className }: MetricsGridProps)
   if (!metrics || metrics.length === 0) {
     return (
       <motion.div 
-        className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+        className="grid gap-3 sm:gap-4 grid-cols-1 xs:grid-cols-2 lg:grid-cols-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
@@ -32,7 +32,11 @@ export function MetricsGrid({ metrics, isLoading, className }: MetricsGridProps)
 
   return (
     <motion.div 
-      className={cn("grid gap-4 md:grid-cols-2 lg:grid-cols-4", className)}
+      className={cn(
+        "grid gap-3 sm:gap-4", 
+        "grid-cols-1 xs:grid-cols-2 lg:grid-cols-4",
+        className
+      )}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}

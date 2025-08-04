@@ -16,6 +16,8 @@ import { CategoryData } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import { TouchFriendlyTooltip } from '../touch-friendly-tooltip';
+import { cn } from '@/lib/utils';
 
 interface BarChartProps {
   data: CategoryData[];
@@ -90,17 +92,20 @@ const InteractiveLegend = ({
         variant="ghost"
         size="sm"
         onClick={() => onToggle(item.value)}
-        className={`h-8 px-3 text-xs transition-all ${
+        className={cn(
+          "h-10 px-3 text-xs sm:text-sm transition-all touch-target",
           item.visible 
             ? 'bg-muted/50 text-foreground' 
             : 'text-muted-foreground opacity-50'
-        }`}
+        )}
       >
         <span 
-          className="inline-block w-3 h-3 rounded-full mr-2" 
+          className="inline-block w-3 h-3 rounded-full mr-2 flex-shrink-0" 
           style={{ backgroundColor: item.visible ? item.color : 'transparent' }}
         />
-        {item.value}
+        <span className="truncate max-w-[100px]" title={item.value}>
+          {item.value}
+        </span>
       </Button>
     ))}
   </div>
@@ -212,8 +217,8 @@ export function BarChart({
           data={visibleData}
           margin={{
             top: 5,
-            right: 30,
-            left: 20,
+            right: 15,
+            left: 10,
             bottom: 5,
           }}
         >
@@ -226,20 +231,26 @@ export function BarChart({
           )}
           <XAxis
             dataKey={categoryKey}
-            tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+            tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
             axisLine={false}
             tickLine={false}
+            interval={0}
+            angle={-45}
+            textAnchor="end"
+            height={60}
           />
           <YAxis
             tickFormatter={(value) => formatValue ? formatValue(value) : value.toLocaleString()}
-            tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+            tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
             axisLine={false}
             tickLine={false}
+            width={60}
           />
           {showTooltip && (
             <Tooltip
-              content={<CustomTooltip formatValue={formatValue} />}
+              content={<TouchFriendlyTooltip formatValue={formatValue} />}
               cursor={{ fill: 'hsl(var(--muted))', opacity: 0.3 }}
+              allowEscapeViewBox={{ x: false, y: true }}
             />
           )}
           <Bar

@@ -22,35 +22,41 @@ interface HeaderProps {
 export function Header({ title = "Dashboard", description }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-16 items-center justify-between px-6">
+      <div className="flex h-16 items-center justify-between px-4 sm:px-6">
         {/* Left side - Title and search */}
-        <div className="flex items-center space-x-4">
-          <div className="hidden lg:block">
-            <h1 className="text-xl font-semibold">{title}</h1>
+        <div className="flex items-center space-x-2 sm:space-x-4 min-w-0 flex-1">
+          {/* Title - responsive sizing */}
+          <div className="hidden sm:block lg:block min-w-0">
+            <h1 className="text-lg sm:text-xl font-semibold truncate">{title}</h1>
             {description && (
-              <p className="text-sm text-muted-foreground">{description}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground truncate">{description}</p>
             )}
           </div>
           
-          {/* Search */}
+          {/* Mobile title - show on small screens */}
+          <div className="block sm:hidden min-w-0 flex-1 ml-12">
+            <h1 className="text-lg font-semibold truncate">{title}</h1>
+          </div>
+          
+          {/* Search - responsive width */}
           <div className="relative hidden md:block">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search..."
-              className="w-64 pl-10"
+              className="w-48 lg:w-64 pl-10"
             />
           </div>
         </div>
 
         {/* Right side - Actions and user menu */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-3">
           {/* Mobile search button */}
           <Button variant="ghost" size="icon" className="md:hidden">
             <Search className="h-4 w-4" />
           </Button>
 
-          {/* Notifications */}
-          <Button variant="ghost" size="icon" className="relative">
+          {/* Notifications - hide on very small screens */}
+          <Button variant="ghost" size="icon" className="relative hidden xs:flex">
             <Bell className="h-4 w-4" />
             <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full" />
           </Button>
