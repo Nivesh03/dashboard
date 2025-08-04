@@ -3,6 +3,7 @@
 import { ReactNode } from "react"
 import { Sidebar } from "./sidebar"
 import { Header } from "./header"
+import { PageTransition } from "./page-transition"
 import { cn } from "@/lib/utils"
 
 interface DashboardLayoutProps {
@@ -30,7 +31,9 @@ export function DashboardLayout({
           "flex-1 p-4 sm:p-6", // Reduced padding on mobile
           className
         )}>
-          {children}
+          <PageTransition>
+            {children}
+          </PageTransition>
         </main>
       </div>
     </div>

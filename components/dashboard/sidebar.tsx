@@ -113,10 +113,10 @@ export function Sidebar({ className }: SidebarProps) {
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  "flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 touch-target interactive",
                   isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:shadow-sm hover:translate-x-1",
                   collapsed && "justify-center"
                 )}
                 onClick={() => setMobileOpen(false)}
