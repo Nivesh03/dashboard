@@ -11,11 +11,11 @@ interface HoverEffectProps {
   disabled?: boolean;
 }
 
-export function HoverEffect({ 
-  children, 
-  effect = "lift", 
+export function HoverEffect({
+  children,
+  effect = "lift",
   className,
-  disabled = false 
+  disabled = false,
 }: HoverEffectProps) {
   if (disabled) {
     return <div className={className}>{children}</div>;
@@ -23,41 +23,40 @@ export function HoverEffect({
 
   const effects = {
     lift: {
-      whileHover: { 
-        y: -2, 
-        boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)" 
+      whileHover: {
+        y: -2,
+        boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
       },
-      transition: { duration: 0.2 }
+      transition: { duration: 0.2 },
     },
     scale: {
       whileHover: { scale: 1.02 },
       whileTap: { scale: 0.98 },
-      transition: { duration: 0.2 }
+      transition: { duration: 0.2 },
     },
     glow: {
-      whileHover: { 
-        boxShadow: "0 0 20px hsl(var(--primary) / 0.3)" 
+      whileHover: {
+        boxShadow: "0 0 20px hsl(var(--primary) / 0.3)",
       },
-      transition: { duration: 0.3 }
+      transition: { duration: 0.3 },
     },
     rotate: {
       whileHover: { rotate: 2 },
-      transition: { duration: 0.2 }
+      transition: { duration: 0.2 },
     },
     bounce: {
-      whileHover: { 
+      whileHover: {
         y: [-2, -4, -2],
-        transition: { 
-          duration: 0.6,
-          times: [0, 0.5, 1],
-          ease: "easeInOut"
-        }
-      }
+      },
+      transition: {
+        duration: 0.6,
+        times: [0, 0.5, 1],
+      },
     },
     slide: {
       whileHover: { x: 4 },
-      transition: { duration: 0.2 }
-    }
+      transition: { duration: 0.2 },
+    },
   };
 
   return (
@@ -71,11 +70,11 @@ export function HoverEffect({
 }
 
 // Interactive card wrapper
-export function InteractiveCard({ 
-  children, 
+export function InteractiveCard({
+  children,
   className,
   onClick,
-  disabled = false 
+  disabled = false,
 }: {
   children: ReactNode;
   className?: string;
@@ -89,10 +88,14 @@ export function InteractiveCard({
         !disabled && "cursor-pointer",
         className
       )}
-      whileHover={!disabled ? { 
-        y: -2, 
-        boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)" 
-      } : {}}
+      whileHover={
+        !disabled
+          ? {
+              y: -2,
+              boxShadow: "0 4px 12px hsl(var(--foreground) / 0.1)",
+            }
+          : {}
+      }
       whileTap={!disabled ? { scale: 0.98 } : {}}
       onClick={!disabled ? onClick : undefined}
       transition={{ duration: 0.2 }}
@@ -103,12 +106,12 @@ export function InteractiveCard({
 }
 
 // Animated button wrapper
-export function AnimatedButton({ 
-  children, 
+export function AnimatedButton({
+  children,
   className,
   variant = "default",
   onClick,
-  disabled = false 
+  disabled = false,
 }: {
   children: ReactNode;
   className?: string;
@@ -119,7 +122,8 @@ export function AnimatedButton({
   const variants = {
     default: "bg-primary text-primary-foreground hover:bg-primary/90",
     ghost: "hover:bg-accent hover:text-accent-foreground",
-    outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+    outline:
+      "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
   };
 
   return (
@@ -141,11 +145,11 @@ export function AnimatedButton({
 }
 
 // Floating action button
-export function FloatingButton({ 
-  children, 
+export function FloatingButton({
+  children,
   className,
   onClick,
-  position = "bottom-right" 
+  position = "bottom-right",
 }: {
   children: ReactNode;
   className?: string;
@@ -156,7 +160,7 @@ export function FloatingButton({
     "bottom-right": "fixed bottom-6 right-6",
     "bottom-left": "fixed bottom-6 left-6",
     "top-right": "fixed top-6 right-6",
-    "top-left": "fixed top-6 left-6"
+    "top-left": "fixed top-6 left-6",
   };
 
   return (
@@ -166,18 +170,18 @@ export function FloatingButton({
         positions[position],
         className
       )}
-      whileHover={{ 
+      whileHover={{
         scale: 1.1,
-        boxShadow: "0 8px 25px hsl(var(--primary) / 0.3)"
+        boxShadow: "0 8px 25px hsl(var(--primary) / 0.3)",
       }}
       whileTap={{ scale: 0.9 }}
       onClick={onClick}
       initial={{ scale: 0 }}
       animate={{ scale: 1 }}
-      transition={{ 
+      transition={{
         type: "spring",
         stiffness: 260,
-        damping: 20 
+        damping: 20,
       }}
     >
       {children}
@@ -186,9 +190,9 @@ export function FloatingButton({
 }
 
 // Ripple effect component
-export function RippleEffect({ 
-  children, 
-  className 
+export function RippleEffect({
+  children,
+  className,
 }: {
   children: ReactNode;
   className?: string;
@@ -200,7 +204,7 @@ export function RippleEffect({
       variants={{
         tap: {
           scale: 0.98,
-        }
+        },
       }}
     >
       {children}
@@ -211,8 +215,8 @@ export function RippleEffect({
           tap: {
             scale: 4,
             opacity: [0, 1, 0],
-            transition: { duration: 0.3 }
-          }
+            transition: { duration: 0.3 },
+          },
         }}
       />
     </motion.div>
