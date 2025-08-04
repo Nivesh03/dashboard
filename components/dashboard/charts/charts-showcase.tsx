@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { LazyLineChart, LazyBarChart, LazyPieChart } from './lazy-charts';
 import { ChartContainer } from './chart-container';
 import { mockApi } from '@/lib/mock-data';
 import { TimeSeriesData, CategoryData } from '@/lib/types';
+import { staggerContainer, staggerItem } from '@/lib/animation-utils';
 
 export function ChartsShowcase() {
   const [revenueData, setRevenueData] = useState<TimeSeriesData[]>([]);
@@ -52,95 +54,107 @@ export function ChartsShowcase() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <motion.div 
+      className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+      variants={staggerContainer}
+      initial="initial"
+      animate="animate"
+      data-motion-component
+    >
       {/* Line Chart - Revenue Over Time */}
-      <ChartContainer
-        title="Revenue Trend"
-        isLoading={isLoading}
-        error={error || undefined}
-        onRetry={loadData}
-        onRefresh={loadData}
-        expandable
-        className="lg:col-span-2"
-      >
-        <LazyLineChart
-          data={revenueData}
-          title=""
-          dataKey="value"
-          color="hsl(var(--chart-1))"
-          formatValue={formatCurrency}
-          showGrid
-          showTooltip
-        />
-      </ChartContainer>
+      <motion.div variants={staggerItem} className="lg:col-span-2">
+        <ChartContainer
+          title="Revenue Trend"
+          isLoading={isLoading}
+          error={error || undefined}
+          onRetry={loadData}
+          onRefresh={loadData}
+          expandable
+        >
+          <LazyLineChart
+            data={revenueData}
+            title=""
+            dataKey="value"
+            color="hsl(var(--chart-1))"
+            formatValue={formatCurrency}
+            showGrid
+            showTooltip
+          />
+        </ChartContainer>
+      </motion.div>
 
       {/* Bar Chart - Channel Performance */}
-      <ChartContainer
-        title="Channel Performance"
-        isLoading={isLoading}
-        error={error || undefined}
-        onRetry={loadData}
-        onRefresh={loadData}
-        expandable
-      >
-        <LazyBarChart
-          data={channelData}
-          title=""
-          dataKey="value"
-          categoryKey="name"
-          formatValue={formatPercentage}
-          showGrid
-          showTooltip
-          showLegend
-        />
-      </ChartContainer>
+      <motion.div variants={staggerItem}>
+        <ChartContainer
+          title="Channel Performance"
+          isLoading={isLoading}
+          error={error || undefined}
+          onRetry={loadData}
+          onRefresh={loadData}
+          expandable
+        >
+          <LazyBarChart
+            data={channelData}
+            title=""
+            dataKey="value"
+            categoryKey="name"
+            formatValue={formatPercentage}
+            showGrid
+            showTooltip
+            showLegend
+          />
+        </ChartContainer>
+      </motion.div>
 
       {/* Pie Chart - Traffic Sources */}
-      <ChartContainer
-        title="Traffic Sources Distribution"
-        isLoading={isLoading}
-        error={error || undefined}
-        onRetry={loadData}
-        onRefresh={loadData}
-        expandable
-      >
-        <LazyPieChart
-          data={channelData}
-          title=""
-          dataKey="value"
-          nameKey="name"
-          formatValue={formatPercentage}
-          showTooltip
-          showLegend
-          showLabels
-          showPercentages
-        />
-      </ChartContainer>
+      <motion.div variants={staggerItem}>
+        <ChartContainer
+          title="Traffic Sources Distribution"
+          isLoading={isLoading}
+          error={error || undefined}
+          onRetry={loadData}
+          onRefresh={loadData}
+          expandable
+        >
+          <LazyPieChart
+            data={channelData}
+            title=""
+            dataKey="value"
+            nameKey="name"
+            formatValue={formatPercentage}
+            showTooltip
+            showLegend
+            showLabels
+            showPercentages
+          />
+        </ChartContainer>
+      </motion.div>
 
       {/* Donut Chart - Conversion Funnel */}
-      <ChartContainer
-        title="Conversion Funnel"
-        isLoading={isLoading}
-        error={error || undefined}
-        onRetry={loadData}
-        onRefresh={loadData}
-        expandable
-        className="lg:col-span-2"
-      >
-        <LazyPieChart
-          data={channelData}
-          title=""
-          dataKey="value"
-          nameKey="name"
-          innerRadius={60}
-          outerRadius={100}
-          formatValue={formatPercentage}
-          showTooltip
-          showLegend
-          showLabels={false}
-          showPercentages
-        />
-      </ChartContainer>
-    </div>
+      <motion.div variants={staggerItem} className="lg:col-span-2">
+        <ChartContainer
+          title="Conversion Funnel"
+          isLoading={isLoading}
+          error={error || undefined}
+          onRetry={loadData}
+          onRefresh={loadData}
+          expandable
+        >
+          <LazyPieChart
+            data={channelData}
+            title=""
+            dataKey="value"
+            nameKey="name"
+            innerRadius={60}
+            outerRadius={100}
+            formatValue={formatPercentage}
+            showTooltip
+            showLegend
+            showLabels={false}
+            showPercentages
+          />
+        </ChartContainer>
+      </motion.div>
+    </motion.div>
   );
 }

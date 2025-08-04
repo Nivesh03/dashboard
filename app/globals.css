@@ -120,6 +120,15 @@
     @apply bg-background text-foreground;
   }
   
+  /* Prevent animation flash on page load */
+  [data-motion-component] {
+    opacity: 0;
+  }
+  
+  [data-motion-component].motion-ready {
+    opacity: 1;
+  }
+  
   /* Smooth theme transitions */
   .theme-transition,
   .theme-transition *,
