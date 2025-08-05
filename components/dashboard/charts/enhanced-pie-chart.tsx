@@ -166,7 +166,7 @@ const CustomLabel = ({
   );
 };
 
-const EnhancedPieChartSkeleton = ({ height = 350 }: { height?: number }) => (
+const EnhancedPieChartSkeleton = () => (
   <Card className="overflow-hidden">
     <CardHeader className="pb-2">
       <div className="flex items-center justify-between">
@@ -245,7 +245,7 @@ export function EnhancedPieChart({
   }, [data, dataKey, nameKey]);
 
   if (isLoading) {
-    return <EnhancedPieChartSkeleton height={height} />;
+    return <EnhancedPieChartSkeleton />;
   }
 
   if (error) {

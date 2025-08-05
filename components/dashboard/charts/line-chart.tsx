@@ -9,7 +9,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { motion } from "framer-motion";
 import { TimeSeriesData } from "@/lib/types";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -28,58 +27,6 @@ interface LineChartProps {
   formatValue?: (value: number) => string;
 }
 
-interface CustomTooltipProps {
-  active?: boolean;
-  payload?: Array<{
-    value: number;
-    name: string;
-    color: string;
-  }>;
-  label?: string;
-  formatValue?: (value: number) => string;
-}
-
-const CustomTooltip = ({
-  active,
-  payload,
-  label,
-  formatValue,
-}: CustomTooltipProps) => {
-  if (active && payload && payload.length && label) {
-    const data = payload[0];
-    const value = data.value as number;
-    const formattedValue = formatValue
-      ? formatValue(value)
-      : value.toLocaleString();
-
-    return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="bg-background/95 backdrop-blur-sm border rounded-lg shadow-lg p-3"
-      >
-        <p className="text-sm font-medium text-foreground">
-          {new Date(label).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })}
-        </p>
-        <p className="text-sm text-muted-foreground">
-          <span
-            className="inline-block w-3 h-3 rounded-full mr-2"
-            style={{ backgroundColor: data.color }}
-          />
-          {data.name}:{" "}
-          <span className="font-semibold text-foreground">
-            {formattedValue}
-          </span>
-        </p>
-      </motion.div>
-    );
-  }
-  return null;
-};
 
 const LineChartSkeleton = ({ height = 300 }: { height?: number }) => (
   <Card>

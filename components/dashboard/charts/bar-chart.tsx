@@ -10,7 +10,6 @@ import {
   Tooltip, 
   ResponsiveContainer
 } from 'recharts';
-import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { CategoryData } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,48 +34,11 @@ interface BarChartProps {
   onRetry?: () => void;
 }
 
-interface CustomTooltipProps {
-  active?: boolean;
-  payload?: Array<{
-    value: number;
-    name: string;
-    color: string;
-  }>;
-  label?: string;
-  formatValue?: (value: number) => string;
-}
-
 interface LegendItem {
   value: string;
   color: string;
   visible: boolean;
 }
-
-const CustomTooltip = ({ active, payload, label, formatValue }: CustomTooltipProps) => {
-  if (active && payload && payload.length) {
-    const data = payload[0];
-    const value = data.value as number;
-    const formattedValue = formatValue ? formatValue(value) : value.toLocaleString();
-    
-    return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="bg-background/95 backdrop-blur-sm border rounded-lg shadow-lg p-3"
-      >
-        <p className="text-sm font-medium text-foreground mb-1">{label}</p>
-        <p className="text-sm text-muted-foreground">
-          <span 
-            className="inline-block w-3 h-3 rounded-full mr-2" 
-            style={{ backgroundColor: data.color }}
-          />
-          {data.name}: <span className="font-semibold text-foreground">{formattedValue}</span>
-        </p>
-      </motion.div>
-    );
-  }
-  return null;
-};
 
 const InteractiveLegend = ({ 
   items, 

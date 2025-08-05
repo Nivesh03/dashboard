@@ -233,7 +233,7 @@ export function IntegrationSummary() {
         details.push('Performance monitoring active');
       }
 
-    } catch (error) {
+    } catch {
       status = 'warning';
       message = 'Performance monitoring limited';
       details.push('Some performance metrics unavailable');

@@ -187,7 +187,7 @@ export default function DataPage() {
       )}
 
       {/* Main Data Table Card */}
-      <ErrorBoundary fallback={({ error, retry }) => (
+      <ErrorBoundary fallback={({ retry }) => (
         <Card className="p-6">
           <div className="text-center space-y-2">
             <p className="text-muted-foreground">Failed to load campaign data.</p>

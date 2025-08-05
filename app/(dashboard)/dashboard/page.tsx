@@ -207,7 +207,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Metrics Cards with Error Boundary and Loading States */}
-      <ErrorBoundary fallback={({ error, retry }) => (
+      <ErrorBoundary fallback={({ }) => (
         <Card className="p-6">
           <p className="text-center text-muted-foreground">
             Failed to load metrics. Please refresh the page.
@@ -231,7 +231,7 @@ export default function DashboardPage() {
           </Button>
         </div>
         
-        <ErrorBoundary fallback={({ error, retry }) => (
+        <ErrorBoundary fallback={({ }) => (
           <Card className="p-6">
             <p className="text-center text-muted-foreground">
               Failed to load charts. Please try again.
@@ -267,7 +267,7 @@ export default function DashboardPage() {
           </Button>
         </div>
         
-        <ErrorBoundary fallback={({ error, retry }) => (
+        <ErrorBoundary fallback={({ }) => (
           <Card className="p-6">
             <p className="text-center text-muted-foreground">
               Failed to load campaign data. Please try again.

@@ -1,17 +1,15 @@
 'use client';
 
 import { Suspense, useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ErrorBoundary } from "@/components/dashboard/error-boundary"
 import { ChartsShowcase } from "@/components/dashboard/charts/charts-showcase"
-import { LazyBarChart, LazyPieChart } from "@/components/dashboard/charts/lazy-charts"
 import { EnhancedRevenueChart } from "@/components/dashboard/charts/enhanced-revenue-chart"
 import { EnhancedBarChart } from "@/components/dashboard/charts/enhanced-bar-chart"
 import { EnhancedPieChart } from "@/components/dashboard/charts/enhanced-pie-chart"
 
-import { ChartContainer } from "@/components/dashboard/charts/chart-container"
 import { ChartSkeleton } from "@/components/dashboard/skeletons"
 import { ArrowLeft, Download, RefreshCw } from "lucide-react"
 import Link from "next/link"

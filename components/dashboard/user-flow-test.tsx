@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -112,7 +112,7 @@ export function UserFlowTest() {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // Run validations
-      const validationResults = await runValidations(flow.validations, flow.path);
+      const validationResults = await runValidations(flow.validations);
       const duration = Date.now() - startTime;
       
       const allPassed = validationResults.every(result => result.passed);
@@ -167,7 +167,7 @@ export function UserFlowTest() {
     setOverallStatus(hasFailures ? 'fail' : 'pass');
   };
 
-  const runValidations = async (validations: string[], path: string): Promise<Array<{validation: string, passed: boolean, message?: string}>> => {
+  const runValidations = async (validations: string[]): Promise<Array<{validation: string, passed: boolean, message?: string}>> => {
     const results = [];
     
     for (const validation of validations) {

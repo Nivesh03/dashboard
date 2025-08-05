@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Download, FileText, Calendar, TrendingUp, Users, DollarSign, Target } from "lucide-react"
 import Link from "next/link"
 import { exportToCSV } from "@/lib/utils"
-import { mockCampaignData, mockChannelData, mockMetrics, mockRevenueData, mockUserData, mockConversionData } from "@/lib/mock-data"
+import { mockCampaignData, mockRevenueData } from "@/lib/mock-data"
 
 // Report types available
 const reportTypes = [
