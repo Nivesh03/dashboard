@@ -129,17 +129,82 @@
     opacity: 1;
   }
   
-  /* Smooth theme transitions */
+  /* Enhanced smooth theme transitions with cubic-bezier easing */
   .theme-transition,
   .theme-transition *,
   .theme-transition *:before,
   .theme-transition *:after {
-    transition: background-color 0.3s ease-in-out, 
-                border-color 0.3s ease-in-out, 
-                color 0.3s ease-in-out,
-                fill 0.3s ease-in-out,
-                stroke 0.3s ease-in-out,
-                box-shadow 0.3s ease-in-out !important;
+    transition: 
+      background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      fill 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      stroke 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  /* Chart-specific transition classes for synchronized theme switching */
+  .chart-theme-transition {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  .chart-theme-transition .recharts-wrapper,
+  .chart-theme-transition .recharts-surface,
+  .chart-theme-transition .recharts-cartesian-grid,
+  .chart-theme-transition .recharts-cartesian-axis,
+  .chart-theme-transition .recharts-legend-wrapper,
+  .chart-theme-transition .recharts-tooltip-wrapper {
+    transition: 
+      fill 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      stroke 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  /* Recharts specific elements for smooth transitions */
+  .chart-theme-transition .recharts-bar,
+  .chart-theme-transition .recharts-area,
+  .chart-theme-transition .recharts-line,
+  .chart-theme-transition .recharts-dot,
+  .chart-theme-transition .recharts-sector {
+    transition: 
+      fill 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      stroke 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  /* Chart text elements */
+  .chart-theme-transition .recharts-text,
+  .chart-theme-transition .recharts-label,
+  .chart-theme-transition .recharts-cartesian-axis-tick text,
+  .chart-theme-transition .recharts-legend-item-text {
+    transition: 
+      fill 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  /* Chart tooltip transitions */
+  .chart-theme-transition .recharts-tooltip-content {
+    transition: 
+      background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  /* Global theme transition class for synchronized switching */
+  .global-theme-transition * {
+    transition: 
+      background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      fill 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      stroke 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
 }
 
@@ -328,6 +393,55 @@
   /* Smooth transitions for all interactive elements */
   .interactive {
     transition: all 0.2s ease-in-out;
+  }
+  
+  /* Theme transition utilities */
+  .theme-transition-fast {
+    transition: 
+      background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  .theme-transition-slow {
+    transition: 
+      background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  /* Disable transitions during theme initialization */
+  .theme-transition-disabled,
+  .theme-transition-disabled * {
+    transition: none !important;
+  }
+  
+  /* CSS custom property transitions for theme variables */
+  :root {
+    transition: 
+      --background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --foreground 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --card 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --card-foreground 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --popover 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --popover-foreground 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --primary 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --primary-foreground 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --secondary 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --secondary-foreground 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --muted 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --muted-foreground 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --accent 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --accent-foreground 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --destructive 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --border 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --input 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --ring 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --chart-1 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --chart-2 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --chart-3 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --chart-4 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      --chart-5 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
