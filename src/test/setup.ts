@@ -1,24 +1,6 @@
 import '@testing-library/jest-dom'
 import React from 'react'
 import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
-import { vi } from 'vitest'
 
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
@@ -74,3 +56,19 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: vi.fn(),
   })),
 })
+
+// Mock localStorage
+const mockLocalStorage = {
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+}
+
+Object.defineProperty(window, 'localStorage', {
+  value: mockLocalStorage,
+  writable: true,
+})
+
+// Ensure window is available globally
+global.window = window
