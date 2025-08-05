@@ -1,0 +1,17 @@
+## AI Tools Used
+- Primary tools: ChatGPT, Gemini CLI, and Claude in Cursor.
+- Key use cases: 
+    - **ChatGPT**: Leveraged for tedious tasks such as generating mock data and creating TypeScript interfaces. Its ability to quickly scaffold repetitive code structures was a significant time-saver.
+    - **Gemini CLI**: Used primarily for tasks within the project environment, like generating documentation and writing unit tests. Its direct access to the codebase made it highly efficient for context-aware code generation.
+    - **Claude (in Cursor)**: Employed for implementing complex features, such as adding multi-column sorting to the data table, and for debugging challenging issues that required a deeper understanding of the code's logic.
+
+## Sample Prompts
+1. "I'm running into a 'module depth exceeded' error specifically on the analytics page. It seems to be happening during the initial data fetch. I think a `useEffect` hook might be running in an infinite loop due to a dependency issue, but I can't seem to locate the exact cause. Analyze the `analytics/page.tsx` and its related components to help me pinpoint the circular dependency and suggest a fix"
+2. "I need to enhance my `DataTable` component. I want to implement column-specific sorting for all headers. Also implement filtering system. This should include a main filter input for a global search and a dropdown/toggle menu that reveals more granular filtering options, like filtering by date range or specific categories. Can you guide me on the best way to structure the state for this and how to create a flexible sorting and filtering logic?"
+3. "My bar and pie charts, are not rendering on the dashboard. I've checked the props and the data seems to be flowing correctly.I can see the charts in the "detailed analysis" section of the page, but they are empty on the main section. Could you review my `chart-theme.ts` and the `enhanced-bar-chart.tsx` component to see if you can spot any error. I recently changes the charts to be more visually appealing, which appears to have caused this issue."
+4. "The current line chart in my application is functional but very basic. I want to make it more engaging. Could you help me refactor the `line-chart.tsx` component to include a more vibrant color palette, add gradient fills under the lines, and implement a custom tooltip that appears on hover, displaying the x-axis value and all corresponding y-axis values for that data point in a clean, readable format."
+
+## AI vs Manual Work Split
+- **AI-generated (60%)**: Mock data, custom hooks (`use-data`, `use-table-filters`), unit tests, and performance optimizations. AI was also instrumental in refactoring large components into smaller, more modular chunks for better clarity and maintainability.
+- **Manual coding (40%)**: Initial project setup, defining the overall page structure, and creating the initial versions of larger components which the AI then helped break down.
+- **Customization**: AI-generated code provided a strong foundation but often required manual adjustments to align with the project's specific ESLint rules, component architecture, and existing type definitions. For example, while an AI created the basic table sorting hook, it was manually customized to handle various data types and integrate seamlessly with the existing UI components and state management. Also AI often uses `any` type which throws linting warnings while build. These were changed to be more specific for better type checking and validation.
