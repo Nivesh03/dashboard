@@ -146,3 +146,52 @@ export function calculateMovingAverage<T extends { value: number }>(
     };
   });
 }
+
+// Convert data to CSV format and trigger download
+export function exportToCSV<T extends Record<string, any>>(
+  data: T[],
+  filename: string,
+  headers?: Record<keyof T, string>
+): void {
+  if (!data || !data.length) {
+    console.error('No data to export');
+    return;
+  }
+
+  // Get all unique keys from the data
+  const keys = Object.keys(data[0]) as Array<keyof T>;
+  
+  // Create header row using provided headers or keys
+  const headerRow = headers 
+    ? keys.map(key => headers[key] || String(key)).join(',') 
+    : keys.join(',');
+
+  // Create data rows
+  const csvRows = data.map(row => {
+    return keys.map(key => {
+      // Handle special characters and ensure proper CSV formatting
+      const value = row[key];
+      const valueStr = value === null || value === undefined ? '' : String(value);
+      // Escape quotes and wrap in quotes if contains comma, newline or quotes
+      return valueStr.includes(',') || valueStr.includes('\n') || valueStr.includes('"') 
+        ? `"${valueStr.replace(/"/g, '""')}"`
+        : valueStr;
+    }).join(',');
+  });
+
+  // Combine header and data rows
+  const csvContent = [headerRow, ...csvRows].join('\n');
+  
+  // Create a blob and download link
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  
+  link.setAttribute('href', url);
+  link.setAttribute('download', `${filename}.csv`);
+  link.style.visibility = 'hidden';
+  
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}

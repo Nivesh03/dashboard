@@ -179,6 +179,68 @@ function ConversionAnalytics() {
 }
 
 export default function AnalyticsPage() {
+  // Add these state variables and handlers at the beginning of the component
+  const [activeTab, setActiveTab] = useState("revenue");
+  const [revenueData, setRevenueData] = useState<any[]>([]);
+  const [channelData, setChannelData] = useState<any[]>([]);
+  const [conversionData, setConversionData] = useState<any[]>([]);
+  
+  // Load all data when component mounts
+  useEffect(() => {
+    const loadAllData = async () => {
+      try {
+        const { mockApi } = await import('@/lib/mock-data');
+        const revenue = await mockApi.getRevenueData();
+        const channel = await mockApi.getChannelData();
+        const conversion = await mockApi.getChannelData(); // Using channel data for conversion demo
+        
+        setRevenueData(revenue);
+        setChannelData(channel);
+        setConversionData(conversion);
+      } catch (error) {
+        console.error('Failed to load data:', error);
+      }
+    };
+    
+    loadAllData();
+  }, []);
+  
+  // Handle tab change
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+  };
+  
+  // Handle export based on active tab
+  const handleExport = () => {
+    const { exportToCSV } = require('@/lib/utils');
+    
+    switch (activeTab) {
+      case "revenue":
+        exportToCSV(
+          revenueData,
+          "revenue-analytics",
+          { date: "Date", value: "Revenue Value" }
+        );
+        break;
+      case "channels":
+        exportToCSV(
+          channelData,
+          "channel-analytics",
+          { name: "Channel", value: "Value" }
+        );
+        break;
+      case "conversions":
+        exportToCSV(
+          conversionData,
+          "conversion-analytics",
+          { name: "Conversion Stage", value: "Value" }
+        );
+        break;
+      default:
+        break;
+    }
+  };
+  
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -203,9 +265,9 @@ export default function AnalyticsPage() {
             <RefreshCw className="mr-2 h-4 w-4" />
             Refresh
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleExport}>
             <Download className="mr-2 h-4 w-4" />
-            Export
+            Export CSV
           </Button>
         </div>
       </div>
@@ -236,7 +298,7 @@ export default function AnalyticsPage() {
       <div className="space-y-4">
         <h2 className="text-xl font-semibold tracking-tight">Detailed Analysis</h2>
         
-        <Tabs defaultValue="revenue" className="space-y-4">
+        <Tabs defaultValue="revenue" className="space-y-4" onValueChange={handleTabChange}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="revenue">Revenue</TabsTrigger>
             <TabsTrigger value="channels">Channels</TabsTrigger>

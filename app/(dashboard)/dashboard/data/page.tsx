@@ -16,6 +16,7 @@ import { mockApi } from "@/lib/mock-data"
 import { TableRow } from "@/lib/types"
 import { ArrowLeft, Download, RefreshCw, Filter, Search } from "lucide-react"
 import Link from "next/link"
+import { exportToCSV } from "@/lib/utils"
 
 // Loading component for the data table
 function DataTableLoading() {
@@ -122,20 +123,23 @@ export default function DataPage() {
   }
 
   const handleExport = () => {
-    // Simulate export functionality
-    const csvContent = "data:text/csv;charset=utf-8," + 
-      "Campaign,Impressions,Clicks,Conversions,Cost,Revenue,ROAS\n" +
-      sortedData.map(row => 
-        `${row.campaign},${row.impressions},${row.clicks},${row.conversions},${row.cost},${row.revenue},${row.roas}`
-      ).join("\n")
-    
-    const encodedUri = encodeURI(csvContent)
-    const link = document.createElement("a")
-    link.setAttribute("href", encodedUri)
-    link.setAttribute("download", `campaign-data-${new Date().toISOString().split('T')[0]}.csv`)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    // Use the exportToCSV function to export data
+    exportToCSV(
+      sortedData,
+      `campaign-data-${new Date().toISOString().split('T')[0]}`,
+      {
+        id: 'ID',
+        campaign: 'Campaign Name',
+        impressions: 'Impressions',
+        clicks: 'Clicks',
+        conversions: 'Conversions',
+        cost: 'Cost ($)',
+        revenue: 'Revenue ($)',
+        roas: 'ROAS',
+        date: 'Date',
+        status: 'Status'
+      }
+    )
   }
 
   useEffect(() => {
@@ -168,7 +172,7 @@ export default function DataPage() {
           </Button>
           <Button variant="outline" size="sm" onClick={handleExport} disabled={isLoading || data.length === 0}>
             <Download className="mr-2 h-4 w-4" />
-            Export
+            Export CSV
           </Button>
         </div>
       </div>

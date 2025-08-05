@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Download, FileText, Calendar, TrendingUp, Users, DollarSign, Target } from "lucide-react"
 import Link from "next/link"
+import { exportToCSV } from "@/lib/utils"
+import { mockCampaignData, mockChannelData, mockMetrics, mockRevenueData, mockUserData, mockConversionData } from "@/lib/mock-data"
 
 // Report types available
 const reportTypes = [
@@ -69,7 +71,50 @@ const recentReports = [
     format: 'PDF'
   }
 ]
-
+const generateReport = (reportId: string) => {
+    const today = new Date().toISOString().split('T')[0];
+    
+    switch (reportId) {
+      case 'performance':
+        // Generate performance report with campaign data
+        exportToCSV(
+          mockCampaignData,
+          `performance_report_${today}`,
+          {
+            id: 'ID',
+            campaign: 'Campaign Name',
+            impressions: 'Impressions',
+            clicks: 'Clicks',
+            conversions: 'Conversions',
+            cost: 'Cost ($)',
+            revenue: 'Revenue ($)',
+            roas: 'ROAS',
+            date: 'Date',
+            status: 'Status'
+          }
+        );
+        break;
+        
+      case 'revenue':
+        // Generate revenue report with revenue data
+        exportToCSV(
+          mockRevenueData,
+          `revenue_report_${today}`,
+          {
+            id: 'ID',
+            name: 'Date',
+            date: 'Full Date',
+            value: 'Revenue ($)',
+            previousValue: 'Previous Revenue ($)',
+            category: 'Category'
+          }
+        );
+        break;
+        
+      default:
+        console.error(`Report type ${reportId} not implemented yet`);
+    }
+  };
 function ReportTypeCard({ report }: { report: typeof reportTypes[0] }) {
   const Icon = report.icon
   const isAvailable = report.status === 'available'
@@ -93,6 +138,7 @@ function ReportTypeCard({ report }: { report: typeof reportTypes[0] }) {
           className="w-full" 
           disabled={!isAvailable}
           variant={isAvailable ? 'default' : 'outline'}
+          onClick={() => isAvailable && generateReport(report.id)}
         >
           {isAvailable ? (
             <>
@@ -109,9 +155,22 @@ function ReportTypeCard({ report }: { report: typeof reportTypes[0] }) {
 }
 
 export default function ReportsPage() {
+  // Function to generate and download report based on report type
+  
+
   const handleDownloadReport = (reportId: number) => {
-    // Simulate report download
-    console.log(`Downloading report ${reportId}`)
+    // Find the report in recentReports
+    const report = recentReports.find(r => r.id === reportId);
+    if (!report) return;
+    
+    // Determine which data to use based on report type
+    if (report.type === 'Performance Report') {
+      generateReport('performance');
+    } else if (report.type === 'Revenue Report') {
+      generateReport('revenue');
+    } else {
+      console.log(`Downloading report ${reportId} - Not implemented yet`);
+    }
   }
 
   return (
