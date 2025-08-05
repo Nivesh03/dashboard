@@ -97,28 +97,28 @@ export const mockChannelData: CategoryData[] = [
     name: 'Organic Search',
     category: 'acquisition',
     value: 35,
-    color: 'hsl(var(--chart-1))'
+    color: '#3b82f6' // Blue
   },
   {
     id: 'paid',
     name: 'Paid Search',
     category: 'acquisition',
     value: 28,
-    color: 'hsl(var(--chart-2))'
+    color: '#10b981' // Green
   },
   {
     id: 'social',
     name: 'Social Media',
     category: 'acquisition',
     value: 22,
-    color: 'hsl(var(--chart-3))'
+    color: '#f59e0b' // Orange
   },
   {
     id: 'direct',
     name: 'Direct',
     category: 'acquisition',
     value: 15,
-    color: 'hsl(var(--chart-4))'
+    color: '#ef4444' // Red
   }
 ];
 

@@ -1,12 +1,16 @@
 'use client';
 
-import { Suspense } from "react"
+import { Suspense, useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ErrorBoundary } from "@/components/dashboard/error-boundary"
 import { ChartsShowcase } from "@/components/dashboard/charts/charts-showcase"
-import { LazyLineChart, LazyBarChart, LazyPieChart } from "@/components/dashboard/charts/lazy-charts"
+import { LazyBarChart, LazyPieChart } from "@/components/dashboard/charts/lazy-charts"
+import { EnhancedRevenueChart } from "@/components/dashboard/charts/enhanced-revenue-chart"
+import { EnhancedBarChart } from "@/components/dashboard/charts/enhanced-bar-chart"
+import { EnhancedPieChart } from "@/components/dashboard/charts/enhanced-pie-chart"
+
 import { ChartContainer } from "@/components/dashboard/charts/chart-container"
 import { ChartSkeleton } from "@/components/dashboard/skeletons"
 import { ArrowLeft, Download, RefreshCw } from "lucide-react"
@@ -19,140 +23,158 @@ function ChartLoading() {
 
 // Individual chart sections for detailed views
 function RevenueAnalytics() {
+  const [revenueData, setRevenueData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadRevenueData = async () => {
+      try {
+        setIsLoading(true);
+        // Import mock data dynamically
+        const { mockApi } = await import('@/lib/mock-data');
+        const data = await mockApi.getRevenueData();
+        setRevenueData(data);
+      } catch (error) {
+        console.error('Failed to load revenue data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadRevenueData();
+  }, []);
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Revenue Trends</CardTitle>
-          <CardDescription>
-            Detailed revenue analysis over time with multiple metrics
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Suspense fallback={<ChartLoading />}>
-            <ChartContainer
-              title=""
-              expandable
-              onRefresh={() => window.location.reload()}
-            >
-              <LazyLineChart
-                data={[]}
-                title=""
-                dataKey="value"
-                color="hsl(var(--chart-1))"
-                formatValue={(value) => `$${value.toLocaleString()}`}
-                showGrid
-                showTooltip
-              />
-            </ChartContainer>
-          </Suspense>
-        </CardContent>
-      </Card>
+      <EnhancedRevenueChart
+        data={revenueData}
+        title="Revenue Trends"
+        dataKey="value"
+        color="hsl(var(--chart-1))"
+        formatValue={formatCurrency}
+        showGrid
+        showTooltip
+        showTrend
+        showGradient
+        isLoading={isLoading}
+        height={450}
+      />
     </div>
   )
 }
 
 function ChannelAnalytics() {
+  const [channelData, setChannelData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadChannelData = async () => {
+      try {
+        setIsLoading(true);
+        // Import mock data dynamically
+        const { mockApi } = await import('@/lib/mock-data');
+        const data = await mockApi.getChannelData();
+        setChannelData(data);
+      } catch (error) {
+        console.error('Failed to load channel data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadChannelData();
+  }, []);
+
+  const formatPercentage = (value: number) => `${value}%`;
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Channel Performance</CardTitle>
-            <CardDescription>
-              Compare performance across different marketing channels
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Suspense fallback={<ChartLoading />}>
-              <ChartContainer
-                title=""
-                expandable
-                onRefresh={() => window.location.reload()}
-              >
-                <LazyBarChart
-                  data={[]}
-                  title=""
-                  dataKey="value"
-                  categoryKey="name"
-                  formatValue={(value) => `${value}%`}
-                  showGrid
-                  showTooltip
-                  showLegend
-                />
-              </ChartContainer>
-            </Suspense>
-          </CardContent>
-        </Card>
+        <EnhancedBarChart
+          data={channelData}
+          title="Channel Performance"
+          dataKey="value"
+          categoryKey="name"
+          formatValue={formatPercentage}
+          showGrid
+          showTooltip
+          showLegend
+          showStats
+          isLoading={isLoading}
+          height={400}
+        />
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Traffic Distribution</CardTitle>
-            <CardDescription>
-              Breakdown of traffic sources and their contribution
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Suspense fallback={<ChartLoading />}>
-              <ChartContainer
-                title=""
-                expandable
-                onRefresh={() => window.location.reload()}
-              >
-                <LazyPieChart
-                  data={[]}
-                  title=""
-                  dataKey="value"
-                  nameKey="name"
-                  formatValue={(value) => `${value}%`}
-                  showTooltip
-                  showLegend
-                  showLabels
-                  showPercentages
-                />
-              </ChartContainer>
-            </Suspense>
-          </CardContent>
-        </Card>
+        <EnhancedPieChart
+          data={channelData}
+          title="Traffic Distribution"
+          dataKey="value"
+          nameKey="name"
+          formatValue={formatPercentage}
+          showTooltip
+          showLegend
+          showLabels
+          showPercentages
+          showStats
+          isLoading={isLoading}
+          height={400}
+          outerRadius={100}
+        />
       </div>
     </div>
   )
 }
 
 function ConversionAnalytics() {
+  const [conversionData, setConversionData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadConversionData = async () => {
+      try {
+        setIsLoading(true);
+        // Import mock data dynamically
+        const { mockApi } = await import('@/lib/mock-data');
+        const data = await mockApi.getChannelData(); // Using channel data for conversion funnel demo
+        setConversionData(data);
+      } catch (error) {
+        console.error('Failed to load conversion data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadConversionData();
+  }, []);
+
+  const formatPercentage = (value: number) => `${value}%`;
+
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Conversion Funnel</CardTitle>
-          <CardDescription>
-            Track user journey from impression to conversion
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Suspense fallback={<ChartLoading />}>
-            <ChartContainer
-              title=""
-              expandable
-              onRefresh={() => window.location.reload()}
-            >
-              <LazyPieChart
-                data={[]}
-                title=""
-                dataKey="value"
-                nameKey="name"
-                innerRadius={60}
-                outerRadius={120}
-                formatValue={(value) => `${value}%`}
-                showTooltip
-                showLegend
-                showLabels={false}
-                showPercentages
-              />
-            </ChartContainer>
-          </Suspense>
-        </CardContent>
-      </Card>
+      <EnhancedPieChart
+        data={conversionData}
+        title="Conversion Funnel"
+        dataKey="value"
+        nameKey="name"
+        innerRadius={60}
+        outerRadius={120}
+        formatValue={formatPercentage}
+        showTooltip
+        showLegend
+        showLabels={false}
+        showPercentages
+        showStats
+        isLoading={isLoading}
+        height={450}
+      />
     </div>
   )
 }
@@ -192,7 +214,7 @@ export default function AnalyticsPage() {
       {/* Charts Overview Section */}
       <div className="space-y-4">
         <h2 className="text-xl font-semibold tracking-tight">Overview Charts</h2>
-        <ErrorBoundary fallback={({ error, retry }) => (
+        <ErrorBoundary fallback={() => (
           <Card className="p-6">
             <p className="text-center text-muted-foreground">
               Failed to load charts. Please refresh the page.

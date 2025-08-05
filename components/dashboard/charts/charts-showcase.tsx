@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { LazyLineChart, LazyBarChart, LazyPieChart } from './lazy-charts';
 import { ChartContainer } from './chart-container';
+import { EnhancedRevenueChart } from './enhanced-revenue-chart';
+import { EnhancedBarChart } from './enhanced-bar-chart';
+import { EnhancedPieChart } from './enhanced-pie-chart';
 import { mockApi } from '@/lib/mock-data';
 import { TimeSeriesData, CategoryData } from '@/lib/types';
 import { staggerContainer, staggerItem } from '@/lib/animation-utils';
@@ -61,99 +64,60 @@ export function ChartsShowcase() {
       animate="animate"
       data-motion-component
     >
-      {/* Line Chart - Revenue Over Time */}
+      {/* Enhanced Revenue Chart */}
       <motion.div variants={staggerItem} className="lg:col-span-2">
-        <ChartContainer
+        <EnhancedRevenueChart
+          data={revenueData}
           title="Revenue Trend"
+          dataKey="value"
+          color="hsl(var(--chart-1))"
+          formatValue={formatCurrency}
+          showGrid
+          showTooltip
+          showTrend
+          showGradient
           isLoading={isLoading}
           error={error || undefined}
-          onRetry={loadData}
-          onRefresh={loadData}
-          expandable
-        >
-          <LazyLineChart
-            data={revenueData}
-            title=""
-            dataKey="value"
-            color="hsl(var(--chart-1))"
-            formatValue={formatCurrency}
-            showGrid
-            showTooltip
-          />
-        </ChartContainer>
+          height={400}
+        />
       </motion.div>
 
-      {/* Bar Chart - Channel Performance */}
+      {/* Enhanced Bar Chart - Channel Performance */}
       <motion.div variants={staggerItem}>
-        <ChartContainer
+        <EnhancedBarChart
+          data={channelData}
           title="Channel Performance"
+          dataKey="value"
+          categoryKey="name"
+          formatValue={formatPercentage}
+          showGrid
+          showTooltip
+          showLegend
+          showStats
           isLoading={isLoading}
           error={error || undefined}
-          onRetry={loadData}
-          onRefresh={loadData}
-          expandable
-        >
-          <LazyBarChart
-            data={channelData}
-            title=""
-            dataKey="value"
-            categoryKey="name"
-            formatValue={formatPercentage}
-            showGrid
-            showTooltip
-            showLegend
-          />
-        </ChartContainer>
+          height={350}
+        />
       </motion.div>
 
-      {/* Pie Chart - Traffic Sources */}
+      {/* Enhanced Pie Chart - Traffic Sources */}
       <motion.div variants={staggerItem}>
-        <ChartContainer
+        <EnhancedPieChart
+          data={channelData}
           title="Traffic Sources Distribution"
+          dataKey="value"
+          nameKey="name"
+          formatValue={formatPercentage}
+          showTooltip
+          showLegend
+          showLabels
+          showPercentages
+          showStats
           isLoading={isLoading}
           error={error || undefined}
-          onRetry={loadData}
-          onRefresh={loadData}
-          expandable
-        >
-          <LazyPieChart
-            data={channelData}
-            title=""
-            dataKey="value"
-            nameKey="name"
-            formatValue={formatPercentage}
-            showTooltip
-            showLegend
-            showLabels
-            showPercentages
-          />
-        </ChartContainer>
-      </motion.div>
-
-      {/* Donut Chart - Conversion Funnel */}
-      <motion.div variants={staggerItem} className="lg:col-span-2">
-        <ChartContainer
-          title="Conversion Funnel"
-          isLoading={isLoading}
-          error={error || undefined}
-          onRetry={loadData}
-          onRefresh={loadData}
-          expandable
-        >
-          <LazyPieChart
-            data={channelData}
-            title=""
-            dataKey="value"
-            nameKey="name"
-            innerRadius={60}
-            outerRadius={100}
-            formatValue={formatPercentage}
-            showTooltip
-            showLegend
-            showLabels={false}
-            showPercentages
-          />
-        </ChartContainer>
+          height={350}
+          outerRadius={90}
+        />
       </motion.div>
     </motion.div>
   );
