@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  LineChart as RechartsLineChart,
   Line,
   XAxis,
   YAxis,
@@ -25,13 +24,19 @@ import {
   BarChart3,
 } from "lucide-react";
 import { useMemo } from "react";
-import { useTheme } from "@/components/providers/theme-provider";
+import { useTheme } from "next-themes";
+import { 
+  getChartColors, 
+  getChartGradient, 
+  getChartCSSVariables,
+  getAxisStyles,
+  getGridStyles 
+} from "@/lib/chart-theme-config";
 
 interface EnhancedRevenueChartProps {
   data: TimeSeriesData[];
   title: string;
   dataKey: string;
-  color?: string;
   isLoading?: boolean;
   error?: string;
   height?: number;
@@ -157,7 +162,6 @@ const EnhancedRevenueChartSkeleton = ({
 export function EnhancedRevenueChart({
   data,
   dataKey,
-  color = "hsl(var(--chart-1))",
   isLoading = false,
   error,
   height = 350,
@@ -167,12 +171,7 @@ export function EnhancedRevenueChart({
   showTrend = true,
   showGradient = true,
 }: EnhancedRevenueChartProps) {
-  const { theme } = useTheme();
-  const isDark =
-    theme === "dark" ||
-    (theme === "system" &&
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const { resolvedTheme } = useTheme();
 
   // Calculate trend and statistics
   const stats = useMemo(() => {
@@ -229,30 +228,25 @@ export function EnhancedRevenueChart({
     );
   }
 
-  // Enhanced color scheme based on theme
-  const chartColors = {
-    primary: isDark ? "hsl(217.2 91.2% 59.8%)" : "hsl(221.2 83.2% 53.3%)",
-    gradient: {
-      start: isDark ? "hsl(217.2 91.2% 59.8%)" : "hsl(221.2 83.2% 53.3%)",
-      end: isDark ? "hsl(217.2 91.2% 59.8%)" : "hsl(221.2 83.2% 53.3%)",
-    },
-    grid: isDark ? "hsl(217.2 32.6% 17.5%)" : "hsl(214.3 31.8% 91.4%)",
-    text: isDark ? "hsl(215 20.2% 65.1%)" : "hsl(215.4 16.3% 46.9%)",
-  };
+  // Get theme-aware colors from centralized configuration
+  const chartColors = getChartColors(resolvedTheme);
+  const primaryGradient = getChartGradient(resolvedTheme, 'primary');
+  const axisStyles = getAxisStyles(resolvedTheme);
+  const gridStyles = getGridStyles(resolvedTheme);
+  const cssVariables = getChartCSSVariables(resolvedTheme);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="relative overflow-hidden"
-      style={
-        {
-          "--chart-glow": isDark
-            ? "0 0 12px hsl(var(--chart-1) / 0.4)"
-            : "0 0 8px hsl(var(--chart-1) / 0.3)",
-        } as React.CSSProperties
-      }
+      className="relative overflow-hidden theme-transition"
+      style={{
+        ...cssVariables,
+        "--chart-glow": resolvedTheme === "dark"
+          ? "0 0 12px hsl(var(--chart-1) / 0.4)"
+          : "0 0 8px hsl(var(--chart-1) / 0.3)",
+      } as React.CSSProperties}
     >
       <Card className="overflow-hidden border-0 shadow-xl bg-gradient-to-br from-background via-background to-muted/10 backdrop-blur-sm">
         <CardHeader className="pb-3 relative">
@@ -327,13 +321,13 @@ export function EnhancedRevenueChart({
                   >
                     <stop
                       offset="0%"
-                      stopColor={chartColors.gradient.start}
-                      stopOpacity={0.3}
+                      stopColor={primaryGradient.start}
+                      stopOpacity={primaryGradient.opacity?.start || 0.3}
                     />
                     <stop
                       offset="100%"
-                      stopColor={chartColors.gradient.end}
-                      stopOpacity={0.05}
+                      stopColor={primaryGradient.end}
+                      stopOpacity={primaryGradient.opacity?.end || 0.05}
                     />
                   </linearGradient>
                   <filter id="glow">
@@ -347,9 +341,7 @@ export function EnhancedRevenueChart({
 
                 {showGrid && (
                   <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke={chartColors.grid}
-                    opacity={0.4}
+                    {...gridStyles}
                     horizontal={true}
                     vertical={false}
                   />
@@ -364,13 +356,9 @@ export function EnhancedRevenueChart({
                       day: "numeric",
                     });
                   }}
-                  tick={{
-                    fontSize: 12,
-                    fill: chartColors.text,
-                    fontWeight: 500,
-                  }}
-                  axisLine={false}
-                  tickLine={false}
+                  tick={axisStyles.tick}
+                  axisLine={axisStyles.axisLine}
+                  tickLine={axisStyles.tickLine}
                   interval="preserveStartEnd"
                   minTickGap={40}
                 />
@@ -381,13 +369,9 @@ export function EnhancedRevenueChart({
                       ? formatValue(value)
                       : `$${(value / 1000).toFixed(0)}k`
                   }
-                  tick={{
-                    fontSize: 12,
-                    fill: chartColors.text,
-                    fontWeight: 500,
-                  }}
-                  axisLine={false}
-                  tickLine={false}
+                  tick={axisStyles.tick}
+                  axisLine={axisStyles.axisLine}
+                  tickLine={axisStyles.tickLine}
                   width={70}
                 />
 
@@ -395,14 +379,14 @@ export function EnhancedRevenueChart({
                 {stats && (
                   <ReferenceLine
                     y={stats.avgValue}
-                    stroke={chartColors.text}
+                    stroke={chartColors.mutedForeground}
                     strokeDasharray="5 5"
                     strokeOpacity={0.5}
                     label={{
                       value: "Avg",
                       position: "insideTopRight",
                       fontSize: 10,
-                      fill: chartColors.text,
+                      fill: chartColors.mutedForeground,
                     }}
                   />
                 )}
@@ -427,12 +411,12 @@ export function EnhancedRevenueChart({
                     fill: chartColors.primary,
                     strokeWidth: 2,
                     r: 4,
-                    stroke: isDark ? "hsl(222.2 84% 4.9%)" : "hsl(0 0% 100%)",
+                    stroke: resolvedTheme === "dark" ? chartColors.background : chartColors.background,
                   }}
                   activeDot={{
                     r: 8,
                     fill: chartColors.primary,
-                    stroke: isDark ? "hsl(222.2 84% 4.9%)" : "hsl(0 0% 100%)",
+                    stroke: resolvedTheme === "dark" ? chartColors.background : chartColors.background,
                     strokeWidth: 3,
                     filter: "url(#glow)",
                     style: { cursor: "pointer" },

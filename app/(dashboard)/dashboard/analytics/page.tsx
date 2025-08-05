@@ -59,7 +59,6 @@ function RevenueAnalytics() {
         data={revenueData}
         title="Revenue Trends"
         dataKey="value"
-        color="hsl(var(--chart-1))"
         formatValue={formatCurrency}
         showGrid
         showTooltip

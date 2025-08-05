@@ -70,7 +70,6 @@ export function ChartsShowcase() {
           data={revenueData}
           title="Revenue Trend"
           dataKey="value"
-          color="hsl(var(--chart-1))"
           formatValue={formatCurrency}
           showGrid
           showTooltip
