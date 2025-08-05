@@ -12,7 +12,12 @@ import { CategoryData } from "@/lib/types";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { useTheme } from "@/components/providers/theme-provider";
+import { useTheme } from "next-themes";
+import { 
+  getChartColors, 
+  getChartColorPalette, 
+  getChartCSSVariables
+} from "@/lib/chart-theme-config";
 import { PieChart as PieChartIcon, Activity, Target, TrendingUp } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -212,9 +217,13 @@ export function EnhancedPieChart({
   formatValue,
   showStats = true,
 }: EnhancedPieChartProps) {
-  const { theme } = useTheme();
-  const isDark = theme === "dark" || (theme === "system" && typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const { resolvedTheme } = useTheme();
   const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
+
+  // Get theme-aware colors from centralized configuration
+  const chartColors = getChartColors(resolvedTheme);
+  const themeAwareColors = colors.length > 0 ? colors : getChartColorPalette(resolvedTheme, 8);
+  const cssVariables = getChartCSSVariables(resolvedTheme);
 
   // Calculate statistics
   const stats = useMemo(() => {
@@ -283,7 +292,8 @@ export function EnhancedPieChart({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="relative overflow-hidden"
+      className="relative overflow-hidden theme-transition"
+      style={cssVariables}
     >
       <Card className="overflow-hidden border-0 shadow-xl bg-gradient-to-br from-background via-background to-muted/10 backdrop-blur-sm">
         <CardHeader className="pb-3 relative">
@@ -327,7 +337,7 @@ export function EnhancedPieChart({
             <ResponsiveContainer width="100%" height={height}>
               <RechartsPieChart>
                 <defs>
-                  {colors.map((color, index) => (
+                  {themeAwareColors.map((color, index) => (
                     <filter key={index} id={`pieGlow${index}`}>
                       <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
                       <feMerge> 
@@ -356,12 +366,12 @@ export function EnhancedPieChart({
                   {visibleData.map((entry, index) => (
                     <Cell 
                       key={`cell-${index}`} 
-                      fill={entry.color || colors[index % colors.length]}
-                      stroke={isDark ? "hsl(222.2 84% 4.9%)" : "hsl(0 0% 100%)"}
+                      fill={entry.color || themeAwareColors[index % themeAwareColors.length]}
+                      stroke={chartColors.background}
                       strokeWidth={3}
-                      filter={`url(#pieGlow${index % colors.length})`}
+                      filter={`url(#pieGlow${index % themeAwareColors.length})`}
                       style={{
-                        filter: `drop-shadow(0 0 8px ${entry.color || colors[index % colors.length]}40)`,
+                        filter: `drop-shadow(0 0 8px ${entry.color || themeAwareColors[index % themeAwareColors.length]}40)`,
                       }}
                     />
                   ))}

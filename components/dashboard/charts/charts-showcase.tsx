@@ -2,16 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { LazyLineChart, LazyBarChart, LazyPieChart } from './lazy-charts';
-import { ChartContainer } from './chart-container';
+import { useTheme } from 'next-themes';
 import { EnhancedRevenueChart } from './enhanced-revenue-chart';
 import { EnhancedBarChart } from './enhanced-bar-chart';
 import { EnhancedPieChart } from './enhanced-pie-chart';
 import { mockApi } from '@/lib/mock-data';
 import { TimeSeriesData, CategoryData } from '@/lib/types';
 import { staggerContainer, staggerItem } from '@/lib/animation-utils';
+import { getChartCSSVariables } from '@/lib/chart-theme-config';
 
 export function ChartsShowcase() {
+  const { resolvedTheme } = useTheme();
   const [revenueData, setRevenueData] = useState<TimeSeriesData[]>([]);
   const [channelData, setChannelData] = useState<CategoryData[]>([]);
   const [, setConversionData] = useState<TimeSeriesData[]>([]);
@@ -56,13 +57,17 @@ export function ChartsShowcase() {
     return `${value}%`;
   };
 
+  // Get theme-aware CSS variables for consistent theming
+  const cssVariables = getChartCSSVariables(resolvedTheme);
+
   return (
     <motion.div 
-      className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+      className="grid grid-cols-1 lg:grid-cols-2 gap-6 theme-transition"
       variants={staggerContainer}
       initial="initial"
       animate="animate"
       data-motion-component
+      style={cssVariables}
     >
       {/* Enhanced Revenue Chart */}
       <motion.div variants={staggerItem} className="lg:col-span-2">

@@ -1,13 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useTheme } from "@/components/providers/theme-provider";
+import { useTheme } from "next-themes";
 import { useEffect, useState, useCallback, memo, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Maximize2, Minimize2 } from "lucide-react";
-import { getChartCSSVariables, getResponsiveDimensions } from "./chart-theme";
+import { getChartCSSVariables } from "@/lib/chart-theme-config";
 import { chartFadeIn, slideUpVariants } from "@/lib/animation-utils";
 
 interface ChartContainerProps {
@@ -111,9 +111,8 @@ export const ResponsiveChartWrapper = memo(function ResponsiveChartWrapper({
     // Apply min/max constraints
     chartHeight = Math.max(minHeight, Math.min(maxHeight, chartHeight));
 
-    // Use responsive dimensions from theme
-    const responsiveDimensions = getResponsiveDimensions(width);
-    chartHeight = Math.min(chartHeight, responsiveDimensions.height);
+    // Apply responsive height constraints
+    // Keep the existing height calculation without theme-specific overrides
 
     setDimensions({ width, height: chartHeight });
   }, [aspectRatio, minHeight, maxHeight]);
@@ -160,7 +159,7 @@ export const ChartContainer = memo(function ChartContainer({
   headerActions,
   expandable = false,
 }: ChartContainerProps) {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -169,21 +168,11 @@ export const ChartContainer = memo(function ChartContainer({
     setMounted(true);
   }, []);
 
-  // Memoize theme calculation
-  const currentTheme = useMemo(() => {
-    if (!mounted) return "light";
-    if (theme === "system") {
-      return window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
-    }
-    return theme;
-  }, [theme, mounted]);
-
-  const isDark = currentTheme === "dark";
-
   // Memoize chart theme variables
-  const chartThemeVars = useMemo(() => getChartCSSVariables(isDark), [isDark]);
+  const chartThemeVars = useMemo(
+    () => getChartCSSVariables(resolvedTheme),
+    [resolvedTheme]
+  );
 
   // Memoize callbacks
   const handleExpand = useCallback(() => {
@@ -267,7 +256,7 @@ export const ChartContainer = memo(function ChartContainer({
               maxHeight={isExpanded ? 800 : 500}
             >
               <motion.div
-                key={currentTheme}
+                key={resolvedTheme}
                 variants={chartFadeIn}
                 initial="initial"
                 animate="animate"
